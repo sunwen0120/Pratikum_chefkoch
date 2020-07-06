@@ -321,3 +321,24 @@ def calculate_mean(data_tags,tag_name):
     s = df_tags.sum()
     return m
 
+def get_cooking_method(cook_method, data):
+
+    # add a new column class 
+    drop_index = []
+    for i in range(len(data)):
+        tags = data.loc[i]["tags"]
+        tags = tags_preprocessing(tags)
+        
+        cooking_same =[l for l in cook_method if l in tags]
+            
+        if len(cooking_same) == 1:
+            data.at[i, 'cooking method'] = cooking_same[0]
+        if len(cooking_same) == 0:
+            drop_index.append(i)
+        if len(cooking_same) > 1:
+            drop_index.append(i)
+            
+    # drop the columns which has no cooking method tags
+    data = data.drop(data.index[drop_index])
+    return data
+
