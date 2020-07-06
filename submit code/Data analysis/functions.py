@@ -13,7 +13,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 
 
-
 def tags_preprocess(tags):
     """
     input: tag string
@@ -293,4 +292,32 @@ def pre_time_group(pre_time):
     if pre_time >= 31:
         bucket = '30+ Min'
     return bucket
+
+def tags_preprocessing(tags):
+    tags = tags.replace("'","")
+    tags = tags.replace(" ","")
+    tags = tags.replace("[","")
+    tags = tags.replace("]","")
+    tags = tags.split(",")
+    tags = [x.lower() for x in tags]
+    return tags
+
+def calculate_mean(data_tags,tag_name):
+    """
+    Helper function to calculate the mean of average score 
+    of recipes with special tags
+    """ 
+    
+    score_list = []
+
+    for i in range(len(data_tags)):
+        tags = data_tags.loc[i]['tags']
+        tags = tags_preprocessing(tags)        
+        if tag_name in tags:
+            score_list.append(data_tags.at[i,'avg_score'])
+    df_tags = pd.DataFrame(score_list)
+    df_tags = df_tags.rename(columns={0:tag_name})
+    m = df_tags.mean()
+    s = df_tags.sum()
+    return m
 
